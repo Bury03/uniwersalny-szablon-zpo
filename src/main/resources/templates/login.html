@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Logowanie</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<!--
+    ============================================================
+    LOGOWANIE
+    ============================================================
+
+    Formularz logowania jest obsługiwany przez Spring Security.
+
+    Ważne:
+    - input name="username"
+    - input name="password"
+    - action="/login"
+
+    Tych nazw nie zmieniamy, bo Spring Security ich oczekuje.
+-->
+
+<header>
+    <h1>Logowanie</h1>
+
+    <nav>
+        <a th:href="@{/}">Strona główna</a>
+        <a th:href="@{/login}">Logowanie</a>
+        <a th:href="@{/register}">Rejestracja</a>
+    </nav>
+</header>
+
+<main>
+
+    <section>
+        <h2>Zaloguj się do systemu</h2>
+
+        <p>
+            Wpisz login i hasło, aby przejść do panelu użytkownika lub administratora.
+        </p>
+
+        <p th:if="${param.error}" style="color: red;">
+            Nieprawidłowy login lub hasło.
+        </p>
+
+        <p th:if="${param.logout}" style="color: green;">
+            Zostałeś poprawnie wylogowany.
+        </p>
+
+        <p th:if="${param.registered}" style="color: green;">
+            Konto zostało utworzone. Możesz się teraz zalogować.
+        </p>
+
+        <form th:action="@{/login}" method="post">
+
+            <input type="hidden"
+                   th:name="${_csrf.parameterName}"
+                   th:value="${_csrf.token}">
+
+            <div>
+                <label for="username">Login</label>
+                <input id="username"
+                       type="text"
+                       name="username"
+                       placeholder="np. admin albo user"
+                       required
+                       autofocus>
+            </div>
+
+            <div>
+                <label for="password">Hasło</label>
+                <input id="password"
+                       type="password"
+                       name="password"
+                       placeholder="Wpisz hasło"
+                       required>
+            </div>
+
+            <div>
+                <button type="submit">Zaloguj</button>
+            </div>
+        </form>
+
+        <p>
+            Nie masz konta?
+            <a th:href="@{/register}">
+                Zarejestruj się
+            </a>
+        </p>
+    </section>
+
+    <section>
+        <h2>Dane testowe</h2>
+
+        <p>
+            Jeżeli korzystasz z domyślnego szablonu, przykładowe konta są tworzone
+            w pliku <strong>DataInitializer.java</strong>.
+        </p>
+
+        <table>
+            <thead>
+            <tr>
+                <th>Rola</th>
+                <th>Login</th>
+                <th>Hasło</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr>
+                <td>Administrator</td>
+                <td>admin</td>
+                <td>admin</td>
+            </tr>
+
+            <tr>
+                <td>Użytkownik</td>
+                <td>user</td>
+                <td>user</td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+
+</main>
+
+</body>
+</html>

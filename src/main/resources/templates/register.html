@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Rejestracja</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<!--
+    ============================================================
+    REJESTRACJA
+    ============================================================
+
+    Formularz tworzy konto zwykłego użytkownika.
+
+    Wysyłane pola:
+    - username
+    - password
+
+    Nie dodajemy emaila, bo encja User w tym szablonie go nie ma.
+-->
+
+<header>
+    <h1>Rejestracja</h1>
+
+    <nav>
+        <a th:href="@{/}">Strona główna</a>
+        <a th:href="@{/login}">Logowanie</a>
+        <a th:href="@{/register}">Rejestracja</a>
+    </nav>
+</header>
+
+<main>
+
+    <section>
+        <h2>Utwórz konto</h2>
+
+        <p>
+            Załóż konto użytkownika, aby móc tworzyć własne rezerwacje.
+        </p>
+
+        <p th:if="${error}" th:text="${error}" style="color: red;">
+            Błąd rejestracji
+        </p>
+
+        <p th:if="${errorMessage}" th:text="${errorMessage}" style="color: red;">
+            Błąd rejestracji
+        </p>
+
+        <form th:action="@{/register}" method="post">
+
+            <input type="hidden"
+                   th:name="${_csrf.parameterName}"
+                   th:value="${_csrf.token}">
+
+            <div>
+                <label for="username">Login</label>
+                <input id="username"
+                       type="text"
+                       name="username"
+                       placeholder="Wpisz login"
+                       required>
+            </div>
+
+            <div>
+                <label for="password">Hasło</label>
+                <input id="password"
+                       type="password"
+                       name="password"
+                       placeholder="Wpisz hasło"
+                       required>
+            </div>
+
+            <div>
+                <button type="submit">Zarejestruj</button>
+            </div>
+        </form>
+
+        <p>
+            Masz już konto?
+            <a th:href="@{/login}">
+                Zaloguj się
+            </a>
+        </p>
+    </section>
+
+    <section>
+        <h2>Informacja</h2>
+
+        <p>
+            Konto utworzone przez ten formularz dostaje rolę
+            <strong>USER</strong>.
+        </p>
+
+        <p>
+            Konto administratora najlepiej tworzyć automatycznie w pliku
+            <strong>DataInitializer.java</strong>.
+        </p>
+    </section>
+
+</main>
+
+</body>
+</html>

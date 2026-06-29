@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+
+<!--
+    ============================================================
+    FRAGMENT: navbar.html
+    ============================================================
+
+    Fragment nawigacji.
+
+    Można go wstawiać do innych widoków, jeśli chcesz mieć wspólne menu.
+-->
+
+<nav th:fragment="navbar">
+    <a th:href="@{/}">Strona główna</a>
+    <a th:href="@{/login}">Logowanie</a>
+    <a th:href="@{/register}">Rejestracja</a>
+    <a th:href="@{/user/panel}">Panel użytkownika</a>
+    <a th:href="@{/admin/panel}">Panel administratora</a>
+</nav>
+
+<nav th:fragment="admin-navbar">
+    <a th:href="@{/admin/panel}">Panel admina</a>
+    <a th:href="@{/admin/main-objects}">Obiekty</a>
+    <a th:href="@{/admin/all-reservations}">Rezerwacje</a>
+    <a th:href="@{/admin/users}">Użytkownicy</a>
+    <a th:href="@{/}">Strona główna</a>
+</nav>
+
+<nav th:fragment="user-navbar">
+    <a th:href="@{/user/panel}">Panel użytkownika</a>
+    <a th:href="@{/user/reservation/new}">Nowa rezerwacja</a>
+    <a th:href="@{/user/my-reservations}">Moje rezerwacje</a>
+    <a th:href="@{/}">Strona główna</a>
+</nav>

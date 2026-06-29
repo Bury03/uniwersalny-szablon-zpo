@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Wszystkie rezerwacje</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<!--
+    ============================================================
+    ADMIN - WSZYSTKIE REZERWACJE
+    ============================================================
+
+    Ten widok pokazuje administratorowi wszystkie rezerwacje w systemie.
+
+    Dane z kontrolera:
+    - reservations
+    - reservationsCount
+
+    Rezerwacja zawiera:
+    - użytkownika,
+    - obiekt,
+    - datę rozpoczęcia,
+    - datę zakończenia,
+    - status,
+    - notatkę.
+-->
+
+<header>
+    <h1>Wszystkie rezerwacje</h1>
+
+    <nav>
+        <a th:href="@{/admin/panel}">Panel admina</a>
+        <a th:href="@{/admin/main-objects}">Obiekty</a>
+        <a th:href="@{/admin/all-reservations}">Rezerwacje</a>
+        <a th:href="@{/admin/users}">Użytkownicy</a>
+        <a th:href="@{/}">Strona główna</a>
+    </nav>
+
+    <form th:action="@{/logout}" method="post">
+        <button type="submit">Wyloguj</button>
+    </form>
+</header>
+
+<main>
+
+    <section>
+        <h2>Lista rezerwacji</h2>
+
+        <p>
+            Liczba rezerwacji:
+            <strong th:text="${reservationsCount}">0</strong>
+        </p>
+
+        <p th:if="${successMessage}" th:text="${successMessage}" style="color: green;">
+            Sukces
+        </p>
+
+        <p th:if="${errorMessage}" th:text="${errorMessage}" style="color: red;">
+            Błąd
+        </p>
+
+        <p th:if="${reservations == null or #lists.isEmpty(reservations)}">
+            Brak rezerwacji w systemie.
+        </p>
+
+        <table th:if="${reservations != null and !#lists.isEmpty(reservations)}">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Użytkownik</th>
+                <th>Obiekt</th>
+                <th>Od</th>
+                <th>Do</th>
+                <th>Status</th>
+                <th>Cena całkowita</th>
+                <th>Dane dodatkowe</th>
+                <th>Notatka</th>
+                <th>Akcje</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="reservation : ${reservations}">
+                <td th:text="${reservation.id}">1</td>
+
+                <td>
+                    <span th:if="${reservation.user != null}"
+                          th:text="${reservation.user.username}">
+                        username
+                    </span>
+
+                    <span th:if="${reservation.user == null}">
+                        Brak użytkownika
+                    </span>
+                </td>
+
+                <td>
+                    <span th:if="${reservation.mainObject != null}"
+                          th:text="${reservation.mainObject.name}">
+                        Obiekt
+                    </span>
+
+                    <span th:if="${reservation.mainObject == null}">
+                        Brak obiektu
+                    </span>
+                </td>
+
+                <td th:text="${#temporals.format(reservation.startDateTime, 'yyyy-MM-dd HH:mm')}">
+                    2026-01-01 10:00
+                </td>
+
+                <td th:text="${#temporals.format(reservation.endDateTime, 'yyyy-MM-dd HH:mm')}">
+                    2026-01-01 12:00
+                </td>
+
+                <td>
+                    <span th:if="${reservation.active}">
+                        Aktywna
+                    </span>
+
+                    <span th:if="${reservation.cancelled}">
+                        Anulowana
+                    </span>
+
+                    <span th:if="${reservation.finished}">
+                        Zakończona
+                    </span>
+                </td>
+
+                <td>
+                    <span th:if="${reservation.totalPrice != null}"
+                          th:text="${reservation.totalPrice}">
+                        0.00
+                    </span>
+
+                    <span th:if="${reservation.totalPrice == null}">
+                        -
+                    </span>
+                </td>
+
+                <td>
+                    <span th:if="${reservation.extraData != null and !reservation.extraData.isBlank()}"
+                          th:text="${reservation.extraData}">
+                        Dane dodatkowe
+                    </span>
+
+                    <span th:if="${reservation.extraData == null or reservation.extraData.isBlank()}">
+                        Brak
+                    </span>
+                </td>
+
+                <td>
+                    <span th:if="${reservation.note != null and !reservation.note.isBlank()}"
+                          th:text="${reservation.note}">
+                        Notatka
+                    </span>
+
+                    <span th:if="${reservation.note == null or reservation.note.isBlank()}">
+                        Brak
+                    </span>
+                </td>
+
+                <td>
+                    <form th:if="${reservation.active}"
+                          th:action="@{/admin/reservations/cancel/{id}(id=${reservation.id})}"
+                          method="post"
+                          style="display: inline;">
+
+                        <input type="hidden"
+                               th:name="${_csrf.parameterName}"
+                               th:value="${_csrf.token}">
+
+                        <button type="submit"
+                                onclick="return confirm('Czy na pewno chcesz anulować tę rezerwację?')">
+                            Anuluj
+                        </button>
+                    </form>
+
+                    <span th:if="${reservation.active}"> | </span>
+
+                    <a th:if="${reservation.active}"
+                       th:href="@{/admin/reservations/finish/{id}(id=${reservation.id})}"
+                       onclick="return confirm('Czy oznaczyć rezerwację jako zakończoną?')">
+                        Zakończ
+                    </a>
+
+                    <span> | </span>
+
+                    <a th:href="@{/admin/reservations/delete/{id}(id=${reservation.id})}"
+                       onclick="return confirm('Czy na pewno chcesz usunąć tę rezerwację z bazy?')">
+                        Usuń
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+
+</main>
+
+</body>
+</html>

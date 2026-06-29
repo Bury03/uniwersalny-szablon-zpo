@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+
+<!--
+    ============================================================
+    FRAGMENT: header.html
+    ============================================================
+
+    Fragment nagłówka strony.
+
+    Można go używać w innych HTML-ach przez Thymeleaf,
+    ale aktualne strony mają już własne nagłówki,
+    więc ten plik jest pomocniczy.
+-->
+
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <title th:text="${title}">System rezerwacji</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>

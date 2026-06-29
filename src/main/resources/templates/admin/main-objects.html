@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Zarządzanie obiektami</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<!--
+    ============================================================
+    ADMIN - ZARZĄDZANIE OBIEKTAMI
+    ============================================================
+
+    Ten widok służy do zarządzania głównymi obiektami aplikacji.
+
+    MainObject może oznaczać zależnie od tematu:
+    - salę,
+    - samochód,
+    - pokój,
+    - sprzęt,
+    - książkę,
+    - gabinet,
+    - usługę.
+
+    Dane z kontrolera:
+    - mainObjects
+    - mainObjectDto
+    - additionalEntities
+    - editMode
+-->
+
+<header>
+    <h1>Zarządzanie obiektami</h1>
+
+    <nav>
+        <a th:href="@{/admin/panel}">Panel admina</a>
+        <a th:href="@{/admin/main-objects}">Obiekty</a>
+        <a th:href="@{/admin/all-reservations}">Rezerwacje</a>
+        <a th:href="@{/admin/users}">Użytkownicy</a>
+        <a th:href="@{/}">Strona główna</a>
+    </nav>
+
+    <form th:action="@{/logout}" method="post">
+        <button type="submit">Wyloguj</button>
+    </form>
+</header>
+
+<main>
+
+    <section>
+        <h2 th:if="${editMode == true}">Edytuj obiekt</h2>
+        <h2 th:unless="${editMode == true}">Dodaj nowy obiekt</h2>
+
+        <form th:object="${mainObjectDto}"
+              th:action="${editMode == true} ? @{/admin/main-objects/update/{id}(id=${mainObjectDto.id})} : @{/admin/main-objects/save}"
+              method="post">
+
+            <input type="hidden" th:field="*{id}">
+
+            <div>
+                <label for="name">Nazwa</label>
+                <input id="name"
+                       type="text"
+                       th:field="*{name}"
+                       placeholder="np. Sala 101 / Auto Opel / Pokój 2"
+                       required>
+            </div>
+
+            <div>
+                <label for="description">Opis</label>
+                <textarea id="description"
+                          th:field="*{description}"
+                          placeholder="Krótki opis obiektu"
+                          rows="3"></textarea>
+            </div>
+
+            <div>
+                <label for="location">Lokalizacja</label>
+                <input id="location"
+                       type="text"
+                       th:field="*{location}"
+                       placeholder="np. Budynek A, piętro 2"
+                       required>
+            </div>
+
+            <div>
+                <label for="capacity">Pojemność</label>
+                <input id="capacity"
+                       type="number"
+                       th:field="*{capacity}"
+                       min="1"
+                       placeholder="np. 30"
+                       required>
+            </div>
+
+            <div>
+                <label for="price">Cena</label>
+                <input id="price"
+                       type="number"
+                       step="0.01"
+                       min="0"
+                       th:field="*{price}"
+                       placeholder="np. 50.00"
+                       required>
+            </div>
+
+            <div>
+                <label for="additionalEntityId">Kategoria / typ</label>
+                <select id="additionalEntityId" th:field="*{additionalEntityId}">
+                    <option value="">-- brak kategorii --</option>
+
+                    <option th:each="additionalEntity : ${additionalEntities}"
+                            th:value="${additionalEntity.id}"
+                            th:text="${additionalEntity.name}">
+                        Kategoria
+                    </option>
+                </select>
+            </div>
+
+            <div>
+                <label>
+                    <input type="checkbox" th:field="*{active}">
+                    Obiekt aktywny
+                </label>
+            </div>
+
+            <div>
+                <button type="submit" th:if="${editMode == true}">
+                    Zapisz zmiany
+                </button>
+
+                <button type="submit" th:unless="${editMode == true}">
+                    Dodaj obiekt
+                </button>
+
+                <a th:if="${editMode == true}"
+                   th:href="@{/admin/main-objects}">
+                    Anuluj edycję
+                </a>
+            </div>
+        </form>
+    </section>
+
+    <section>
+        <h2>Lista obiektów</h2>
+
+        <p th:if="${mainObjects == null or #lists.isEmpty(mainObjects)}">
+            Brak obiektów w systemie.
+        </p>
+
+        <table th:if="${mainObjects != null and !#lists.isEmpty(mainObjects)}">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nazwa</th>
+                <th>Opis</th>
+                <th>Lokalizacja</th>
+                <th>Pojemność</th>
+                <th>Cena</th>
+                <th>Kategoria</th>
+                <th>Aktywny</th>
+                <th>Akcje</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="object : ${mainObjects}">
+                <td th:text="${object.id}">1</td>
+
+                <td th:text="${object.name}">Nazwa</td>
+
+                <td th:text="${object.description}">Opis</td>
+
+                <td th:text="${object.location}">Lokalizacja</td>
+
+                <td th:text="${object.capacity}">0</td>
+
+                <td th:text="${object.price}">0.00</td>
+
+                <td>
+                    <span th:if="${object.additionalEntity != null}"
+                          th:text="${object.additionalEntity.name}">
+                        Kategoria
+                    </span>
+
+                    <span th:if="${object.additionalEntity == null}">
+                        Brak
+                    </span>
+                </td>
+
+                <td>
+                    <span th:if="${object.active}">Tak</span>
+                    <span th:unless="${object.active}">Nie</span>
+                </td>
+
+                <td>
+                    <a th:href="@{/admin/main-objects/edit/{id}(id=${object.id})}">
+                        Edytuj
+                    </a>
+
+                    |
+
+                    <a th:if="${object.active}"
+                       th:href="@{/admin/main-objects/deactivate/{id}(id=${object.id})}"
+                       onclick="return confirm('Czy na pewno chcesz dezaktywować ten obiekt?')">
+                        Dezaktywuj
+                    </a>
+
+                    <a th:unless="${object.active}"
+                       th:href="@{/admin/main-objects/activate/{id}(id=${object.id})}">
+                        Aktywuj
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+
+</main>
+
+</body>
+</html>

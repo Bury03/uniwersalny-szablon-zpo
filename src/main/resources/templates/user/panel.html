@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel użytkownika</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<!--
+    ============================================================
+    USER - PANEL UŻYTKOWNIKA
+    ============================================================
+
+    To jest główna strona zwykłego użytkownika po zalogowaniu.
+
+    Dane z kontrolera:
+    - username
+    - mainObjects
+    - availableObjectsCount
+    - reservations
+    - reservationsCount
+
+    Użytkownik może:
+    - zobaczyć dostępne obiekty,
+    - przejść do formularza nowej rezerwacji,
+    - zobaczyć swoje rezerwacje.
+-->
+
+<header>
+    <h1>Panel użytkownika</h1>
+
+    <nav>
+        <a th:href="@{/user/panel}">Panel</a>
+        <a th:href="@{/user/reservation/new}">Nowa rezerwacja</a>
+        <a th:href="@{/user/my-reservations}">Moje rezerwacje</a>
+        <a th:href="@{/}">Strona główna</a>
+    </nav>
+
+    <form th:action="@{/logout}" method="post">
+        <button type="submit">Wyloguj</button>
+    </form>
+</header>
+
+<main>
+
+    <section>
+        <h2>
+            Witaj,
+            <span th:text="${username}">użytkownik</span>!
+        </h2>
+
+        <p>
+            To jest Twój panel użytkownika. Możesz tutaj sprawdzić dostępne obiekty
+            i utworzyć nową rezerwację.
+        </p>
+    </section>
+
+    <section>
+        <h2>Podsumowanie</h2>
+
+        <p>
+            <strong>Dostępne obiekty:</strong>
+            <span th:text="${availableObjectsCount}">0</span>
+        </p>
+
+        <p>
+            <strong>Twoje rezerwacje:</strong>
+            <span th:text="${reservationsCount}">0</span>
+        </p>
+
+        <p>
+            <a th:href="@{/user/reservation/new}">
+                Utwórz nową rezerwację
+            </a>
+            |
+            <a th:href="@{/user/my-reservations}">
+                Zobacz moje rezerwacje
+            </a>
+        </p>
+    </section>
+
+    <section>
+        <h2>Dostępne obiekty</h2>
+
+        <p th:if="${mainObjects == null or #lists.isEmpty(mainObjects)}">
+            Brak dostępnych obiektów do rezerwacji.
+        </p>
+
+        <table th:if="${mainObjects != null and !#lists.isEmpty(mainObjects)}">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nazwa</th>
+                <th>Opis</th>
+                <th>Lokalizacja</th>
+                <th>Pojemność</th>
+                <th>Cena</th>
+                <th>Kategoria</th>
+                <th>Akcja</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="object : ${mainObjects}">
+                <td th:text="${object.id}">
+                    1
+                </td>
+
+                <td th:text="${object.name}">
+                    Nazwa
+                </td>
+
+                <td th:text="${object.description}">
+                    Opis
+                </td>
+
+                <td th:text="${object.location}">
+                    Lokalizacja
+                </td>
+
+                <td th:text="${object.capacity}">
+                    0
+                </td>
+
+                <td th:text="${object.price}">
+                    0.00
+                </td>
+
+                <td>
+                    <span th:if="${object.additionalEntity != null}"
+                          th:text="${object.additionalEntity.name}">
+                        Kategoria
+                    </span>
+
+                    <span th:if="${object.additionalEntity == null}">
+                        Brak
+                    </span>
+                </td>
+
+                <td>
+                    <a th:href="@{/user/reserve/{id}(id=${object.id})}">
+                        Rezerwuj
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section>
+        <h2>Ostatnie rezerwacje</h2>
+
+        <p th:if="${reservations == null or #lists.isEmpty(reservations)}">
+            Nie masz jeszcze żadnych rezerwacji.
+        </p>
+
+        <table th:if="${reservations != null and !#lists.isEmpty(reservations)}">
+            <thead>
+            <tr>
+                <th>Obiekt</th>
+                <th>Od</th>
+                <th>Do</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="reservation : ${reservations}">
+                <td>
+                    <span th:if="${reservation.mainObject != null}"
+                          th:text="${reservation.mainObject.name}">
+                        Obiekt
+                    </span>
+
+                    <span th:if="${reservation.mainObject == null}">
+                        Brak obiektu
+                    </span>
+                </td>
+
+                <td th:text="${#temporals.format(reservation.startDateTime, 'yyyy-MM-dd HH:mm')}">
+                    2026-01-01 10:00
+                </td>
+
+                <td th:text="${#temporals.format(reservation.endDateTime, 'yyyy-MM-dd HH:mm')}">
+                    2026-01-01 12:00
+                </td>
+
+                <td>
+                    <span th:if="${reservation.active}">
+                        Aktywna
+                    </span>
+
+                    <span th:if="${reservation.cancelled}">
+                        Anulowana
+                    </span>
+
+                    <span th:if="${reservation.finished}">
+                        Zakończona
+                    </span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <p th:if="${reservations != null and !#lists.isEmpty(reservations)}">
+            <a th:href="@{/user/my-reservations}">
+                Pokaż wszystkie moje rezerwacje
+            </a>
+        </p>
+    </section>
+
+</main>
+
+</body>
+</html>

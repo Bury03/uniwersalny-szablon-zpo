@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>System rezerwacji</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<!--
+    ============================================================
+    STRONA GŁÓWNA
+    ============================================================
+
+    To jest publiczna strona startowa aplikacji.
+
+    Dostępna dla każdego:
+    - niezalogowanego użytkownika,
+    - zalogowanego użytkownika,
+    - administratora.
+
+    Z tej strony można przejść do:
+    - logowania,
+    - rejestracji,
+    - panelu użytkownika,
+    - panelu administratora.
+-->
+
+<header>
+    <h1>System rezerwacji</h1>
+
+    <nav>
+        <a th:href="@{/}">Strona główna</a>
+        <a th:href="@{/login}">Logowanie</a>
+        <a th:href="@{/register}">Rejestracja</a>
+        <a th:href="@{/user/panel}">Panel użytkownika</a>
+        <a th:href="@{/admin/panel}">Panel administratora</a>
+    </nav>
+</header>
+
+<main>
+
+    <section>
+        <h2>Witaj w systemie rezerwacji</h2>
+
+        <p>
+            To jest prosty system webowy napisany w Spring Boot.
+            Aplikacja pozwala użytkownikom rezerwować dostępne obiekty,
+            a administratorowi zarządzać obiektami, użytkownikami i rezerwacjami.
+        </p>
+
+        <p>
+            Szablon można łatwo dopasować do różnych tematów egzaminacyjnych,
+            na przykład:
+        </p>
+
+        <ul>
+            <li>rezerwacja sal,</li>
+            <li>rezerwacja samochodów,</li>
+            <li>rezerwacja pokoi,</li>
+            <li>rezerwacja sprzętu,</li>
+            <li>rezerwacja gabinetów,</li>
+            <li>rezerwacja usług.</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Co możesz zrobić?</h2>
+
+        <div>
+            <h3>Użytkownik</h3>
+
+            <p>
+                Zwykły użytkownik może założyć konto, zalogować się,
+                przeglądać dostępne obiekty oraz tworzyć własne rezerwacje.
+            </p>
+
+            <p>
+                <a th:href="@{/register}">
+                    Załóż konto
+                </a>
+                |
+                <a th:href="@{/login}">
+                    Zaloguj się
+                </a>
+                |
+                <a th:href="@{/user/panel}">
+                    Przejdź do panelu użytkownika
+                </a>
+            </p>
+        </div>
+
+        <div>
+            <h3>Administrator</h3>
+
+            <p>
+                Administrator może zarządzać obiektami, przeglądać wszystkie rezerwacje
+                oraz sprawdzać listę użytkowników w systemie.
+            </p>
+
+            <p>
+                <a th:href="@{/admin/panel}">
+                    Przejdź do panelu administratora
+                </a>
+            </p>
+        </div>
+    </section>
+
+    <section>
+        <h2>Główne funkcje aplikacji</h2>
+
+        <table>
+            <thead>
+            <tr>
+                <th>Funkcja</th>
+                <th>Opis</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr>
+                <td>Logowanie</td>
+                <td>Użytkownik może zalogować się do systemu.</td>
+            </tr>
+
+            <tr>
+                <td>Rejestracja</td>
+                <td>Nowy użytkownik może utworzyć konto.</td>
+            </tr>
+
+            <tr>
+                <td>Role</td>
+                <td>System rozróżnia użytkownika zwykłego i administratora.</td>
+            </tr>
+
+            <tr>
+                <td>Obiekty</td>
+                <td>Administrator może dodawać i edytować obiekty do rezerwacji.</td>
+            </tr>
+
+            <tr>
+                <td>Rezerwacje</td>
+                <td>Użytkownik może rezerwować aktywne obiekty.</td>
+            </tr>
+
+            <tr>
+                <td>Panel admina</td>
+                <td>Administrator ma dostęp do zarządzania całym systemem.</td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section>
+        <h2>Dane testowe</h2>
+
+        <p>
+            W szablonie zwykle tworzone są przykładowe konta w pliku
+            <strong>DataInitializer.java</strong>.
+        </p>
+
+        <p>
+            Przykładowo możesz mieć:
+        </p>
+
+        <table>
+            <thead>
+            <tr>
+                <th>Rola</th>
+                <th>Login</th>
+                <th>Hasło</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr>
+                <td>Administrator</td>
+                <td>admin</td>
+                <td>admin</td>
+            </tr>
+
+            <tr>
+                <td>Użytkownik</td>
+                <td>user</td>
+                <td>user</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <p>
+            Jeżeli u Ciebie w <strong>DataInitializer.java</strong> są inne dane,
+            korzystaj z tych, które masz wpisane w kodzie.
+        </p>
+    </section>
+
+</main>
+
+<footer>
+    <p>
+        Prosty szablon aplikacji Spring Boot do nauki i egzaminu.
+    </p>
+</footer>
+
+</body>
+</html>

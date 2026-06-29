@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Nowa rezerwacja</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<!--
+    ============================================================
+    USER - FORMULARZ REZERWACJI
+    ============================================================
+
+    Ten widok służy do tworzenia nowej rezerwacji.
+
+    Dane z kontrolera:
+    - reservationForm
+    - mainObjects
+    - selectedMainObject
+    - errorMessage
+
+    Formularz wysyła dane do:
+
+    POST /user/reservation
+-->
+
+<header>
+    <h1>Nowa rezerwacja</h1>
+
+    <nav>
+        <a th:href="@{/user/panel}">Panel użytkownika</a>
+        <a th:href="@{/user/my-reservations}">Moje rezerwacje</a>
+        <a th:href="@{/user/reservation/new}">Nowa rezerwacja</a>
+        <a th:href="@{/}">Strona główna</a>
+    </nav>
+
+    <form th:action="@{/logout}" method="post">
+        <button type="submit">Wyloguj</button>
+    </form>
+</header>
+
+<main>
+
+    <section>
+        <h2>Utwórz rezerwację</h2>
+
+        <p th:if="${selectedMainObject != null}">
+            Wybrany obiekt:
+            <strong th:text="${selectedMainObject.name}">Nazwa obiektu</strong>
+        </p>
+
+        <p th:if="${errorMessage}" th:text="${errorMessage}" style="color: red;">
+            Błąd
+        </p>
+
+        <p th:if="${mainObjects == null or #lists.isEmpty(mainObjects)}">
+            Brak aktywnych obiektów do rezerwacji.
+        </p>
+
+        <form th:if="${mainObjects != null and !#lists.isEmpty(mainObjects)}"
+              th:object="${reservationForm}"
+              th:action="@{/user/reservation}"
+              method="post">
+
+            <input type="hidden"
+                   th:name="${_csrf.parameterName}"
+                   th:value="${_csrf.token}">
+
+            <input type="hidden" th:field="*{id}">
+
+            <div>
+                <label for="mainObjectId">Wybierz obiekt</label>
+
+                <select id="mainObjectId"
+                        th:field="*{mainObjectId}"
+                        required>
+
+                    <option value="">-- wybierz obiekt --</option>
+
+                    <option th:each="object : ${mainObjects}"
+                            th:value="${object.id}"
+                            th:text="${object.name + ' - ' + object.location}">
+                        Obiekt
+                    </option>
+                </select>
+            </div>
+
+            <div>
+                <label for="startDateTime">Data i godzina rozpoczęcia</label>
+
+                <input id="startDateTime"
+                       type="datetime-local"
+                       th:field="*{startDateTime}"
+                       required>
+            </div>
+
+            <div>
+                <label for="endDateTime">Data i godzina zakończenia</label>
+
+                <input id="endDateTime"
+                       type="datetime-local"
+                       th:field="*{endDateTime}"
+                       required>
+            </div>
+
+            <div>
+                <label for="note">Notatka</label>
+
+                <textarea id="note"
+                          th:field="*{note}"
+                          rows="4"
+                          placeholder="np. Potrzebny projektor, odbiór rano, dodatkowe informacje..."></textarea>
+            </div>
+
+            <!--
+                Pole uniwersalne pod różne tematy.
+                Przykłady:
+                - kino: wpisujesz miejsca, np. A1,A2,A3,
+                - paczkomat: wpisujesz gabaryt, np. M,
+                - weterynarz: wpisujesz imię zwierzęcia,
+                - auto: wpisujesz informacje o kierowcy.
+            -->
+            <div>
+                <label for="extraData">Dane dodatkowe</label>
+
+                <input id="extraData"
+                       type="text"
+                       th:field="*{extraData}"
+                       placeholder="np. A1,A2,A3 albo gabaryt M">
+            </div>
+
+            <!--
+                Checkbox do prostego pokazania algorytmu zniżki.
+                Przy tematach bez zniżki można go usunąć z HTML-a.
+            -->
+            <div>
+                <label>
+                    <input type="checkbox" th:field="*{discount}">
+                    Zastosuj dodatkową zniżkę
+                </label>
+            </div>
+
+            <div>
+                <button type="submit">Zarezerwuj</button>
+
+                <a th:href="@{/user/panel}">
+                    Anuluj
+                </a>
+            </div>
+        </form>
+    </section>
+
+    <section>
+        <h2>Dostępne obiekty</h2>
+
+        <table th:if="${mainObjects != null and !#lists.isEmpty(mainObjects)}">
+            <thead>
+            <tr>
+                <th>Nazwa</th>
+                <th>Opis</th>
+                <th>Lokalizacja</th>
+                <th>Pojemność</th>
+                <th>Cena</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="object : ${mainObjects}">
+                <td th:text="${object.name}">Nazwa</td>
+
+                <td th:text="${object.description}">Opis</td>
+
+                <td th:text="${object.location}">Lokalizacja</td>
+
+                <td th:text="${object.capacity}">0</td>
+
+                <td th:text="${object.price}">0.00</td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+
+</main>
+
+</body>
+</html>

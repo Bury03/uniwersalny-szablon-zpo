@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Użytkownicy</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<!--
+    ============================================================
+    ADMIN - LISTA UŻYTKOWNIKÓW
+    ============================================================
+
+    Ten widok pokazuje wszystkich użytkowników systemu.
+
+    Dane z kontrolera:
+    - users
+    - usersCount
+
+    Encja User w tym szablonie ma pola:
+    - id
+    - username
+    - password
+    - role
+
+    Hasła nie pokazujemy w HTML-u.
+-->
+
+<header>
+    <h1>Użytkownicy</h1>
+
+    <nav>
+        <a th:href="@{/admin/panel}">Panel admina</a>
+        <a th:href="@{/admin/main-objects}">Obiekty</a>
+        <a th:href="@{/admin/all-reservations}">Rezerwacje</a>
+        <a th:href="@{/admin/users}">Użytkownicy</a>
+        <a th:href="@{/}">Strona główna</a>
+    </nav>
+
+    <form th:action="@{/logout}" method="post">
+        <button type="submit">Wyloguj</button>
+    </form>
+</header>
+
+<main>
+
+    <section>
+        <h2>Lista użytkowników</h2>
+
+        <p>
+            <strong>Liczba użytkowników:</strong>
+            <span th:text="${usersCount}">0</span>
+        </p>
+
+        <p th:if="${users == null or #lists.isEmpty(users)}">
+            Brak użytkowników w systemie.
+        </p>
+
+        <table th:if="${users != null and !#lists.isEmpty(users)}">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nazwa użytkownika</th>
+                <th>Rola</th>
+                <th>Opis roli</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="user : ${users}">
+                <td th:text="${user.id}">
+                    1
+                </td>
+
+                <td th:text="${user.username}">
+                    username
+                </td>
+
+                <td th:text="${user.role}">
+                    USER
+                </td>
+
+                <td>
+                    <span th:if="${user.role.name() == 'ADMIN'}">
+                        Administrator systemu
+                    </span>
+
+                    <span th:if="${user.role.name() == 'USER'}">
+                        Zwykły użytkownik
+                    </span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section>
+        <h2>Informacja</h2>
+
+        <p>
+            Ten widok służy tylko do podglądu użytkowników.
+            W tym prostym szablonie użytkownik zakłada konto przez formularz rejestracji,
+            a administrator jest tworzony w danych startowych aplikacji.
+        </p>
+
+        <p>
+            Hasła nie są pokazywane, ponieważ są zapisane w bazie w postaci zaszyfrowanej.
+        </p>
+    </section>
+
+</main>
+
+</body>
+</html>

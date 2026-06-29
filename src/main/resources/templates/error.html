@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Błąd</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<!--
+    ============================================================
+    STRONA BŁĘDU
+    ============================================================
+
+    Ta strona pokazuje się, gdy aplikacja trafi na błąd.
+
+    Spring może przekazać tutaj różne dane:
+    - status,
+    - error,
+    - message,
+    - path.
+
+    Jeśli czegoś nie ma, Thymeleaf po prostu pokaże tekst awaryjny.
+-->
+
+<header>
+    <h1>Wystąpił błąd</h1>
+
+    <nav>
+        <a th:href="@{/}">Strona główna</a>
+        <a th:href="@{/login}">Logowanie</a>
+        <a th:href="@{/user/panel}">Panel użytkownika</a>
+        <a th:href="@{/admin/panel}">Panel administratora</a>
+    </nav>
+</header>
+
+<main>
+    <section>
+        <h2>Coś poszło nie tak</h2>
+
+        <p>
+            <strong>Status:</strong>
+            <span th:text="${status}">Nieznany</span>
+        </p>
+
+        <p>
+            <strong>Błąd:</strong>
+            <span th:text="${error}">Brak szczegółów</span>
+        </p>
+
+        <p>
+            <strong>Komunikat:</strong>
+            <span th:text="${message}">Brak komunikatu</span>
+        </p>
+
+        <p>
+            <strong>Ścieżka:</strong>
+            <span th:text="${path}">Brak ścieżki</span>
+        </p>
+
+        <p>
+            <a th:href="@{/}">Wróć na stronę główną</a>
+        </p>
+    </section>
+</main>
+
+</body>
+</html>
