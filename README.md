@@ -1,16 +1,21 @@
 # Uniwersalny szablon egzaminacyjny Spring Boot
 
-Ten projekt jest bazą do szybkiego robienia aplikacji zaliczeniowych typu:
+Ten projekt jest bazą do szybkiego robienia prostych aplikacji zaliczeniowych w Spring Boot.
 
-- wypożyczalnia samochodów,
-- system paczkomatów,
-- rezerwacja biletów w kinie,
-- umawianie wizyt do weterynarza,
-- hotel,
-- rezerwacja sal,
-- wypożyczalnia sprzętu.
+Szablon nie jest przygotowany pod jeden konkretny temat. Przykłady typu wypożyczalnia samochodów, paczkomaty, kino albo weterynarz służą tylko do pokazania, jak można przerobić ten sam szkielet na różne zadania. Na egzaminie temat może być inny, ale zwykle da się go sprowadzić do podobnego schematu.
 
-Projekt jest celowo zrobiony na ogólnych nazwach klas. Dzięki temu przy nowym temacie nie trzeba zmieniać całej struktury aplikacji.
+## Ogólny schemat aplikacji
+
+Najczęściej temat da się opisać tak:
+
+1. Użytkownik wybiera jakiś zasób.
+2. Użytkownik wykonuje operację na tym zasobie.
+3. System zapisuje operację w bazie danych.
+4. Backend sprawdza warunek albo wykonuje algorytm.
+5. Użytkownik widzi tylko swoje dane.
+6. Administrator widzi wszystko.
+7. Jest przynajmniej jeden endpoint REST.
+8. Jest test jednostkowy najważniejszego algorytmu.
 
 ## Loginy startowe
 
@@ -35,28 +40,20 @@ Projekt jest celowo zrobiony na ogólnych nazwach klas. Dzięki temu przy nowym 
 
 Nie zmieniaj od razu nazw klas `MainObject`, `AdditionalEntity`, `Reservation`. One są celowo ogólne.
 
-Zmieniasz znaczenie klas przez dane, napisy i algorytm.
-
-Przykład dla wypożyczalni samochodów:
-
-| Klasa w kodzie | Znaczenie w temacie |
+| Klasa w kodzie | Znaczenie ogólne |
 |---|---|
-| `MainObject` | samochód |
-| `AdditionalEntity` | typ auta |
-| `Reservation` | rezerwacja auta |
+| `MainObject` | główny zasób systemu, np. auto, pokój, lekarz, miejsce, sprzęt |
+| `AdditionalEntity` | typ, kategoria, grupa, lokalizacja albo właściciel zasobu |
+| `Reservation` | operacja użytkownika, np. rezerwacja, zgłoszenie, wypożyczenie, zamówienie |
+| `AlgorithmService` | miejsce na logikę punktowaną w zadaniu |
+| `OperationRestController` | uniwersalny endpoint REST do pokazania w Swaggerze |
 
-Przykład dla weterynarza:
-
-| Klasa w kodzie | Znaczenie w temacie |
-|---|---|
-| `MainObject` | lekarz weterynarii |
-| `AdditionalEntity` | specjalizacja |
-| `Reservation` | wizyta |
+Dzięki temu przy nowym temacie nie trzeba przebudowywać całego projektu. Najpierw zmienia się dane, napisy i algorytm.
 
 ## Co zwykle zmieniasz przy nowym temacie
 
 1. `config/DataInitializer.java`  
-   Tu wpisujesz dane startowe: auta, lekarzy, skrytki, seanse, sale.
+   Tu wpisujesz dane startowe pasujące do tematu.
 
 2. `service/AlgorithmService.java`  
    Tu zostawiasz albo przerabiasz algorytm pod temat.
@@ -110,7 +107,7 @@ Przykładowy JSON:
   "mainObjectId": 1,
   "startDateTime": "2026-07-01T10:00",
   "endDateTime": "2026-07-03T10:00",
-  "note": "Odbiór rano",
+  "note": "Przykładowa notatka",
   "extraData": "Dane zależne od tematu",
   "discount": true
 }
@@ -124,23 +121,29 @@ Najbezpieczniejsza kolejność:
 
 1. Start aplikacji.
 2. Logowanie jako `user`.
-3. Lista dostępnych obiektów.
-4. Formularz rezerwacji / operacji.
-5. Zapis operacji.
-6. Widok „moje rezerwacje”, gdzie user widzi tylko swoje dane.
+3. Lista dostępnych zasobów.
+4. Formularz operacji.
+5. Zapis operacji do bazy.
+6. Widok danych użytkownika, gdzie user widzi tylko swoje rekordy.
 7. Logowanie jako `admin`.
-8. Admin widzi wszystkie rezerwacje i obiekty.
+8. Admin widzi wszystkie rekordy i zarządza zasobami.
 9. Swagger i endpoint REST.
 10. Test jednostkowy algorytmu.
 
-## Gdzie są najważniejsze komentarze
+## Dokumentacja
 
-| Plik | Po co go czytać |
-|---|---|
-| `MainObject.java` | wyjaśnia główny obiekt aplikacji |
-| `AdditionalEntity.java` | wyjaśnia typ/kategorię |
-| `Reservation.java` | wyjaśnia operację użytkownika |
-| `ReservationForm.java` | wyjaśnia dane z formularza |
-| `ReservationService.java` | wyjaśnia logikę zapisu i bezpieczeństwo danych |
-| `AlgorithmService.java` | wyjaśnia algorytmy pod różne tematy |
-| `SecurityConfig.java` | wyjaśnia role i dostęp |
+Najpierw przeczytaj:
+
+```text
+docs/00_START_TUTAJ.md
+```
+
+Potem przy przerabianiu tematu używaj:
+
+```text
+docs/01_INSTRUKCJA_PRZERABIANIA.md
+docs/02_SCIAGA_MAPOWANIA_I_ALGORYTMOW.md
+docs/03_CHECKLISTA_PUNKTOW.md
+docs/04_CO_ZMIENIAC_A_CZEGO_NIE.md
+docs/05_PROBA_NA_LOSOWYM_TEMACIE.md
+```

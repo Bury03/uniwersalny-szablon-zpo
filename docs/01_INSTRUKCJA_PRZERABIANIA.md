@@ -1,25 +1,30 @@
 # Instrukcja przerabiania szablonu pod nowy temat
 
-Ta instrukcja jest po to, żeby nie zaczynać projektu od zera.
+Ta instrukcja zakłada, że temat na egzaminie może być inny niż przykłady z zajęć. Dlatego nie próbuj najpierw zgadywać klas domenowych. Najpierw dopasuj temat do ogólnego szkieletu.
 
 ## Krok 1. Ustal mapowanie tematu
 
-Najpierw odpowiedz sobie na trzy pytania:
+Wypełnij taką tabelę:
 
-| Pytanie | Odpowiedź |
+| Element | Co oznacza w nowym temacie |
 |---|---|
-| Co jest głównym obiektem systemu? | `MainObject` |
-| Jaka jest kategoria / typ tego obiektu? | `AdditionalEntity` |
-| Co wykonuje użytkownik? | `Reservation` |
+| `MainObject` |  |
+| `AdditionalEntity` |  |
+| `Reservation` |  |
+| `location` |  |
+| `capacity` |  |
+| `price` |  |
+| `extraData` |  |
 
-Przykład:
+Przykłady mapowania:
 
-| Temat | MainObject | AdditionalEntity | Reservation |
+| Typ tematu | MainObject | AdditionalEntity | Reservation / operacja |
 |---|---|---|---|
-| Wypożyczalnia aut | samochód | typ auta | rezerwacja auta |
-| Weterynarz | lekarz | specjalizacja | wizyta |
-| Paczkomat | skrytka | paczkomat albo rozmiar | paczka |
-| Kino | seans | film | rezerwacja miejsc |
+| rezerwacje czasowe | zasób do rezerwacji | typ zasobu | rezerwacja terminu |
+| wypożyczenia | rzecz do wypożyczenia | kategoria rzeczy | wypożyczenie |
+| zgłoszenia | osoba albo usługa | specjalizacja/status | zgłoszenie |
+| bilety/miejsca | wydarzenie albo seans | kategoria/film/sala | rezerwacja miejsc |
+| magazyn/paczki | skrytka/miejsce | typ/rozmiar/lokalizacja | nadanie/przydział |
 
 ## Krok 2. Zmień dane startowe
 
@@ -31,9 +36,21 @@ src/main/java/com/example/egzamin/config/DataInitializer.java
 
 Tu zmieniasz przykładowe kategorie i obiekty.
 
-Nie ruszaj logiki tworzenia użytkowników, jeśli nie musisz.
+Zwykle zostawiasz tworzenie użytkowników:
 
-## Krok 3. Zmień napisy w HTML-ach
+```text
+admin / admin123
+user / user123
+```
+
+Zmieniasz głównie dane typu:
+
+```text
+AdditionalEntity -> kategorie, typy, specjalizacje, strefy
+MainObject -> zasoby widoczne w aplikacji
+```
+
+## Krok 3. Zmień napisy w widokach
 
 Najczęściej zmieniasz pliki:
 
@@ -46,17 +63,17 @@ src/main/resources/templates/admin/main-objects.html
 src/main/resources/templates/admin/all-reservations.html
 ```
 
-Zamieniasz słowa typu:
+Zamieniasz słowa ogólne na słowa z tematu:
 
-| Było | Zmieniasz na przykład na |
+| Ogólne słowo | Przykładowe znaczenie |
 |---|---|
-| Obiekt | Samochód / Lekarz / Skrytka / Seans |
-| Rezerwacja | Wypożyczenie / Wizyta / Paczka / Bilet |
-| Lokalizacja | Miejsce odbioru / Gabinet / Adres paczkomatu / Sala |
-| Pojemność | Liczba miejsc / Rozmiar / Liczba osób |
-| Cena | Cena za dzień / Cena wizyty / Cena biletu |
+| Obiekt | zasób, auto, pokój, sprzęt, lekarz, miejsce |
+| Rezerwacja | operacja, wypożyczenie, wizyta, zgłoszenie, zamówienie |
+| Lokalizacja | adres, gabinet, sala, piętro, strefa, punkt odbioru |
+| Pojemność | liczba miejsc, rozmiar, limit, liczba osób |
+| Cena | cena za dzień, cena usługi, opłata, cena biletu |
 
-## Krok 4. Wybierz algorytm
+## Krok 4. Wybierz albo dopisz algorytm
 
 Plik:
 
@@ -64,16 +81,16 @@ Plik:
 src/main/java/com/example/egzamin/service/AlgorithmService.java
 ```
 
-Gotowe algorytmy:
+W szablonie są przykładowe typy algorytmów:
 
-| Temat | Metoda |
+| Typ wymagania | Metoda / pomysł |
 |---|---|
-| auta / hotel / sprzęt | `calculatePrice(...)` |
-| weterynarz / terminy | `hasTimeConflict(...)` |
-| paczkomaty | `findSmallestLockerCapacity(...)` |
-| kino | `suggestSeatsTogether(...)` |
+| liczenie ceny | `calculatePrice(...)` |
+| kolizja terminów | `hasTimeConflict(...)` |
+| najmniejszy pasujący zasób | `findSmallestLockerCapacity(...)` |
+| miejsca obok siebie | `suggestSeatsTogether(...)` |
 
-Nie musisz używać wszystkich algorytmów naraz.
+Nie traktuj nazw dosłownie. Jeśli temat nie dotyczy skrytek, metoda z wyborem najmniejszego zasobu może nadal pasować, np. do wyboru najmniejszej sali, pojemnika, miejsca albo pakietu.
 
 ## Krok 5. Dopasuj formularz
 
@@ -87,16 +104,36 @@ Masz tam pola:
 
 | Pole | Do czego służy |
 |---|---|
-| `mainObjectId` | wybór głównego obiektu |
-| `startDateTime` | początek |
-| `endDateTime` | koniec |
-| `note` | notatka |
+| `mainObjectId` | wybór głównego zasobu |
+| `startDateTime` | początek operacji, jeżeli temat ma czas |
+| `endDateTime` | koniec operacji, jeżeli temat ma czas |
+| `note` | zwykła notatka |
 | `extraData` | dane zależne od tematu |
-| `discount` | przykładowa zniżka |
+| `discount` | przykładowy checkbox do algorytmu |
 
-Jeśli któreś pole nie pasuje do tematu, możesz je ukryć albo zostawić jako dodatkową informację.
+Jeżeli temat nie ma dat, możesz zostawić daty jako uproszczenie albo ukryć je w widoku i ustawiać technicznie w serwisie.
 
-## Krok 6. Zostaw jeden test algorytmu
+## Krok 6. Dopasuj REST API
+
+Gotowy endpoint:
+
+```text
+POST /api/operations
+```
+
+Dla punktów ważne jest, żeby endpoint działał. Możesz zostawić ogólną ścieżkę albo zmienić ją na tematyczną.
+
+Przykłady:
+
+| Typ tematu | Możliwa ścieżka |
+|---|---|
+| rezerwacje | `/api/reservations` |
+| zgłoszenia | `/api/requests` |
+| wypożyczenia | `/api/rentals` |
+| bilety | `/api/tickets` |
+| paczki | `/api/parcels` |
+
+## Krok 7. Zostaw jeden test algorytmu
 
 Plik:
 
@@ -104,18 +141,27 @@ Plik:
 src/test/java/com/example/egzamin/service/AlgorithmServiceTest.java
 ```
 
-Na zaliczenie wystarczy jeden dobry test, ale w szablonie jest kilka przykładów.
+Na zaliczenie wystarczy jeden dobry test, który pokazuje najważniejszą logikę.
 
-Dla konkretnego tematu możesz zostawić tylko ten, który pasuje.
+Przykłady testów:
 
-## Krok 7. Sprawdź security
+| Typ algorytmu | Co testować |
+|---|---|
+| cena | czy cena końcowa uwzględnia liczbę dni i zniżkę |
+| kolizja | czy system wykrywa nakładające się terminy |
+| dobór zasobu | czy system wybiera najmniejszy pasujący zasób |
+| miejsca | czy system znajduje miejsca obok siebie |
 
-Wymaganie najczęściej brzmi:
+## Krok 8. Sprawdź Security
 
-- zwykły użytkownik widzi tylko swoje rezerwacje,
-- admin widzi wszystko.
+Najczęstsze wymaganie:
 
-To jest już zrobione w:
+```text
+USER widzi tylko swoje rekordy
+ADMIN widzi wszystkie rekordy
+```
+
+To jest obsługiwane w:
 
 ```text
 SecurityConfig.java
@@ -124,21 +170,24 @@ AdminPanelController.java
 ReservationService.java
 ```
 
-## Krok 8. Sprawdź REST API
+Jeżeli temat wymaga dodatkowej roli, np. kasjera albo kuriera, najprościej dodać ją do `Role.java` i przypisać odpowiednią ścieżkę w `SecurityConfig.java`.
 
-Gotowy endpoint:
+## Krok 9. Uruchom i pokaż przepływ
+
+Sprawdź:
 
 ```text
-POST /api/operations
+mvnw.cmd test
+mvnw.cmd spring-boot:run
 ```
 
-Możesz zmienić ścieżkę na bardziej tematyczną:
+Potem pokaż:
 
-| Temat | Lepsza ścieżka |
-|---|---|
-| auta | `/api/reservations` |
-| paczkomaty | `/api/parcels` |
-| kino | `/api/tickets` |
-| weterynarz | `/api/visits` |
-
-Ale nie musisz. Dla punktów ważne jest, żeby endpoint działał.
+1. stronę główną,
+2. logowanie usera,
+3. formularz operacji,
+4. zapis danych,
+5. widok danych usera,
+6. panel admina,
+7. Swagger,
+8. test algorytmu.
